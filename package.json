@@ -7,6 +7,17 @@
     "start": "tsx src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "dependencies": {
+    "@google/analytics-data": "^4.1.0",
+    "fastmcp": "^1.0.0",
+    "google-auth-library": "^9.14.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
