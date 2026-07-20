@@ -1,18 +1,15 @@
-FROM node:20-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY pyproject.toml ./
+COPY src/ ./src/
 
-# Install dependencies
-RUN npm install
+RUN pip install --no-cache-dir .
 
-# Copy source code
-COPY . .
+ENV PORT=8080
+ENV MCP_BASE_URL=""
 
-# Expose port for SSE
 EXPOSE 8080
 
-# Run using tsx
-CMD ["npx", "tsx", "src/index.ts"]
+CMD ["python", "-m", "ga4_mcp"]
