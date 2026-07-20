@@ -8,7 +8,6 @@ COPY src/ ./src/
 RUN pip install --no-cache-dir .
 
 ENV PORT=8080
-ENV MCP_BASE_URL=""
 
 EXPOSE 8080
 

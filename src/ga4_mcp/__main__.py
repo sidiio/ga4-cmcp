@@ -7,7 +7,7 @@ from ga4_mcp.server import create_server
 
 def main() -> None:
     port = int(os.environ.get("PORT", "8080"))
-    base_url = os.environ.get("MCP_BASE_URL", f"http://localhost:{port}")
+    base_url = os.environ.get("MCP_BASE_URL") or f"http://localhost:{port}"
 
     mcp = create_server(base_url=base_url)
     mcp.run(transport="streamable-http", host="0.0.0.0", port=port)
