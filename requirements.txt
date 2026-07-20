@@ -1,0 +1,6 @@
+fastmcp
+google-analytics-data
+google-auth-oauthlib
+google-auth
+uvicorn
+pydantic
