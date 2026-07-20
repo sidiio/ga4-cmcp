@@ -77,7 +77,7 @@ def run_report(property_id: str, start_date: str, end_date: str, metrics: list[s
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--port", type=int, default=8080)
     parser.add_argument("--host", type=str, default="0.0.0.0")
     args = parser.parse_args()
     

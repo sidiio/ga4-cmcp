@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY server.py .
 
 # Expose port for SSE
-EXPOSE 8000
+EXPOSE 8080
 
 # Set entrypoint
-CMD ["python", "server.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "server.py", "--host", "0.0.0.0", "--port", "8080"]
