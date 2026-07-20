@@ -1,12 +1,13 @@
 # GA4 FastMCP Server
 
-This is a custom Google Analytics 4 (GA4) MCP server built with Python and [FastMCP](https://github.com/fastmcp/mcp-python). It is designed to work with AI assistants like Claude Web and automation tools like n8n, exposing GA4 querying capabilities over Server-Sent Events (SSE). 
+This is a custom Google Analytics 4 (GA4) MCP server built with Python, FastAPI, and [FastMCP](https://github.com/fastmcp/mcp-python). It is designed to work with AI assistants like Claude Web and automation tools like n8n, exposing GA4 querying capabilities over Server-Sent Events (SSE). 
 
-Unlike some other MCP implementations that rely strictly on service accounts, this server uses Google Cloud OAuth 2.0 Client ID and Secret (via environment variables) to authenticate.
+This server includes a built-in interactive Google Cloud OAuth 2.0 flow. You simply visit the server's URL to log in, and it handles the token generation for you—just like the Google Ads MCP.
 
 ## Features
+- Interactive Google OAuth 2.0 login (`/login`).
 - Provides a `run_report` tool for AI agents to pull specific metrics and dimensions from your GA4 property based on date ranges.
-- Uses Server-Sent Events (SSE) transport natively (runs on port `8080`).
+- Uses Server-Sent Events (SSE) transport natively (runs on port `8080`, SSE endpoint is at `/mcp/sse`).
 - Fully containerized and ready for deployment via Coolify or Docker Compose.
 
 ## Prerequisites
@@ -14,8 +15,8 @@ You need a Google Cloud project with the **Google Analytics Data API** enabled.
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
 2. Enable the **Google Analytics Data API**.
-3. Create OAuth 2.0 Client Credentials (Desktop App or Web App).
-4. Obtain a Refresh Token using your Client ID and Secret (you can use the [Google OAuth 2.0 Playground](https://developers.google.com/oauthplayground/) with the scope `https://www.googleapis.com/auth/analytics.readonly`).
+3. Create OAuth 2.0 Client Credentials (Web App). 
+   - **Crucial Step:** In the Google Cloud Console, set the **Authorized redirect URIs** for your credential to exactly: `https://ga4-mcp.yourdomain.com/oauth2callback` (replace with your actual Coolify/deployment domain).
 
 ## Deployment on Coolify
 1. Push this repository to your GitHub account.
@@ -24,23 +25,16 @@ You need a Google Cloud project with the **Google Analytics Data API** enabled.
 4. In the Coolify environment variables section for this project, add:
    - `GOOGLE_CLIENT_ID`: Your Google Cloud Client ID.
    - `GOOGLE_CLIENT_SECRET`: Your Google Cloud Client Secret.
-   - `GOOGLE_REFRESH_TOKEN`: The Refresh Token you generated.
-5. Deploy! The server will start and expose the SSE endpoint on port `8080`.
+   - `BASE_URL`: The public URL of your server (e.g., `https://ga4-mcp.yourdomain.com`).
+5. Deploy! The server will start and expose the web app on port `8080`.
 
-## Local Testing
-If you want to run the server locally without Docker:
-```bash
-pip install -r requirements.txt
-export GOOGLE_CLIENT_ID="your_client_id"
-export GOOGLE_CLIENT_SECRET="your_client_secret"
-export GOOGLE_REFRESH_TOKEN="your_refresh_token"
-python server.py --host 0.0.0.0 --port 8080
-```
-
-## Connecting to Claude / n8n
-Once deployed, grab your Coolify instance URL (e.g., `https://ga4-mcp.yourdomain.com/sse`).
-*   **For n8n:** Add the URL to an HTTP request node or a custom MCP connection.
-*   **For Claude Web:** Add a Custom Server connection and provide the SSE URL. 
+## Connecting and Authenticating
+1. **Authenticate:** Go to your server's base URL (e.g., `https://ga4-mcp.yourdomain.com`).
+2. Click **Login with Google**. Follow the prompts to authorize access to your Google Analytics data.
+3. The server will automatically save the connection tokens locally.
+4. **Connect to Claude / n8n:** Grab your Coolify instance SSE URL (e.g., `https://ga4-mcp.yourdomain.com/mcp/sse`).
+   *   **For n8n:** Add the URL to an HTTP request node or a custom MCP connection.
+   *   **For Claude Web:** Add a Custom Server connection and provide the SSE URL. 
 
 ## Tools Available
 - **`run_report`**: Extracts data from a GA4 property.
