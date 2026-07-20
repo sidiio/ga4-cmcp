@@ -1,16 +1,18 @@
-FROM python:3.11-slim
+FROM node:20-slim
 
 WORKDIR /app
 
-# Copy requirements and install
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy package files
+COPY package*.json ./
 
-# Copy server code
-COPY server.py .
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
 
 # Expose port for SSE
 EXPOSE 8080
 
-# Set entrypoint
-CMD ["python", "server.py", "--host", "0.0.0.0", "--port", "8080"]
+# Run using tsx
+CMD ["npx", "tsx", "src/index.ts"]

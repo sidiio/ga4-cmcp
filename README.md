@@ -1,40 +1,36 @@
 # GA4 FastMCP Server
 
-This is a custom Google Analytics 4 (GA4) MCP server built with Python, FastAPI, and [FastMCP](https://github.com/fastmcp/mcp-python). It is designed to work with AI assistants like Claude Web and automation tools like n8n, exposing GA4 querying capabilities over Server-Sent Events (SSE). 
+This is a custom Google Analytics 4 (GA4) MCP server built with **TypeScript** and [FastMCP](https://github.com/punkpeye/fastmcp). It is designed to natively integrate with Claude Web and other AI assistants that support the Model Context Protocol OAuth flow.
 
-This server includes a built-in interactive Google Cloud OAuth 2.0 flow. You simply visit the server's URL to log in, and it handles the token generation for you—just like the Google Ads MCP.
+Because it uses FastMCP's built-in `GoogleProvider`, it automatically exposes the `/.well-known/oauth-authorization-server` endpoints. This means **Claude will natively handle the OAuth connection** for you, exactly like the Google Ads MCP!
 
 ## Features
-- Interactive Google OAuth 2.0 login (`/login`).
+- Native Claude Web OAuth integration.
 - Provides a `run_report` tool for AI agents to pull specific metrics and dimensions from your GA4 property based on date ranges.
-- Uses Server-Sent Events (SSE) transport natively (runs on port `8080`, SSE endpoint is at `/mcp/sse`).
-- Fully containerized and ready for deployment via Coolify or Docker Compose.
+- Uses Server-Sent Events (SSE) transport (port `8080`, SSE endpoint is at `/mcp/sse`).
+- Fully containerized Node.js application ready for deployment via Coolify or Docker Compose.
 
 ## Prerequisites
-You need a Google Cloud project with the **Google Analytics Data API** enabled.
-
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
 2. Enable the **Google Analytics Data API**.
 3. Create OAuth 2.0 Client Credentials (Web App). 
-   - **Crucial Step:** In the Google Cloud Console, set the **Authorized redirect URIs** for your credential to exactly: `https://ga4-mcp.yourdomain.com/oauth2callback` (replace with your actual Coolify/deployment domain).
+   - **Crucial Step:** When setting the **Authorized redirect URIs** in Google Cloud, you must provide the exact redirect URI that Claude uses for custom MCP connectors (e.g., `https://claude.ai/api/mcp/auth_callback` or whatever Claude specifies when you add the connector).
 
 ## Deployment on Coolify
 1. Push this repository to your GitHub account.
 2. In Coolify, create a new resource and point it to your repository.
-3. Coolify will automatically detect the `Dockerfile` / `docker-compose.yml`.
-4. In the Coolify environment variables section for this project, add:
+3. In the Coolify environment variables section for this project, add:
    - `GOOGLE_CLIENT_ID`: Your Google Cloud Client ID.
    - `GOOGLE_CLIENT_SECRET`: Your Google Cloud Client Secret.
-   - `BASE_URL`: The public URL of your server (e.g., `https://ga4-mcp.yourdomain.com`).
-5. Deploy! The server will start and expose the web app on port `8080`.
+   - `BASE_URL`: The public URL of your server (e.g., `https://mcpga4.yourdomain.com`).
+4. Deploy! 
 
-## Connecting and Authenticating
-1. **Authenticate:** Go to your server's base URL (e.g., `https://ga4-mcp.yourdomain.com`).
-2. Click **Login with Google**. Follow the prompts to authorize access to your Google Analytics data.
-3. The server will automatically save the connection tokens locally.
-4. **Connect to Claude / n8n:** Grab your Coolify instance SSE URL (e.g., `https://ga4-mcp.yourdomain.com/mcp/sse`).
-   *   **For n8n:** Add the URL to an HTTP request node or a custom MCP connection.
-   *   **For Claude Web:** Add a Custom Server connection and provide the SSE URL. 
+## Connecting to Claude
+1. In Claude Web, go to **Connectors** -> **Add Custom Server**.
+2. URL: `https://mcpga4.yourdomain.com/mcp/sse`
+3. Check **Requires Authentication (OAuth)**.
+4. Claude will automatically discover the OAuth endpoints from your server!
+5. When you click **Connect**, Claude will redirect you to Google to log in, and securely pass the token to your server.
 
 ## Tools Available
 - **`run_report`**: Extracts data from a GA4 property.

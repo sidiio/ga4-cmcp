@@ -1,0 +1,14 @@
+{
+  "name": "ga4-mcp",
+  "version": "1.0.0",
+  "description": "This is a custom Google Analytics 4 (GA4) MCP server built with Python, FastAPI, and [FastMCP](https://github.com/fastmcp/mcp-python). It is designed to work with AI assistants like Claude Web and automation tools like n8n, exposing GA4 querying capabilities over Server-Sent Events (SSE).",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
